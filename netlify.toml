@@ -1,27 +1,19 @@
-# example netlify.toml
 [build]
-  command = "npm run build"
+  command = "npm install --legacy-peer-deps && npm run build"
   functions = "netlify/functions"
   publish = "build"
 
+[build.environment]
+  NODE_VERSION = "18"
+  CI = "false"
+
 [dev]
-  framework  = "#custom"           # because we're specifying both command and targetPort
-  command    = "npm start"         # the long-running dev server
-  targetPort = 3000                # wait for CRA on 3000
-  port       = 8888   
+  framework  = "#custom"
+  command    = "npm start"
+  targetPort = 3000
+  port       = 8888
 
-  ## Uncomment to use this redirect for Single Page Applications like create-react-app.
-  ## Not needed for static site generators.
-  #[[redirects]]
-  #  from = "/*"
-  #  to = "/index.html"
-  #  status = 200
-
-  ## (optional) Settings for Netlify Dev
-  ## https://github.com/netlify/cli/blob/main/docs/netlify-dev.md#project-detection
-  #[dev]
-  #  command = "yarn start" # Command to start your dev server
-  #  port = 3000 # Port that the dev server will be listening on
-  #  publish = "dist" # Folder with the static content for _redirect file
-
-  ## more info on configuring this file: https://ntl.fyi/file-based-build-config
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
