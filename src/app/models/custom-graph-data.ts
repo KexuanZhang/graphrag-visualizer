@@ -66,14 +66,14 @@ export interface CustomGraphData extends GraphData {
 
 
   export const customNodeColumns: MRT_ColumnDef<CustomNode>[] = [
-    {
-      accessorKey: "uuid",
-      header: "id",
-    },
-    {
-      accessorKey: "human_readable_id",
-      header: "human_readable_id",
-    },
+    // {
+    //   accessorKey: "uuid",
+    //   header: "id",
+    // },
+    // {
+    //   accessorKey: "human_readable_id",
+    //   header: "human_readable_id",
+    // },
     {
       accessorKey: "name",
       header: "name",
@@ -98,14 +98,14 @@ export interface CustomGraphData extends GraphData {
           ? JSON.stringify(renderedCellValue, null, 2)
           : renderedCellValue,
     },
-    {
-      accessorKey: "text_unit_ids",
-      header: "text_unit_ids",
-      Cell: ({ renderedCellValue }) =>
-        Array.isArray(renderedCellValue)
-          ? JSON.stringify(renderedCellValue, null, 2)
-          : renderedCellValue,
-    },
+    // {
+    //   accessorKey: "text_unit_ids",
+    //   header: "text_unit_ids",
+    //   Cell: ({ renderedCellValue }) =>
+    //     Array.isArray(renderedCellValue)
+    //       ? JSON.stringify(renderedCellValue, null, 2)
+    //       : renderedCellValue,
+    // },
     {
       accessorKey: "description_embedding",
       header: "description_embedding",
@@ -202,36 +202,36 @@ export interface CustomGraphData extends GraphData {
         accessorKey: "description",
         header: "description",
     },
-    {
-        accessorKey: "text_unit_ids",
-        header: "text_unit_ids",
-        Cell: ({ renderedCellValue }) =>
-          Array.isArray(renderedCellValue)
-            ? JSON.stringify(renderedCellValue, null, 2)
-            : renderedCellValue,
-    },
-    {
-        accessorKey: "id",
-        header: "id",
-    },
-    {
-        accessorKey: "human_readable_id",
-        header: "human_readable_id",
-    },
-    {
-        accessorKey: "source_degree",
-        header: "source_degree",
-    },
-    {
-        accessorKey: "target_degree",
-        header: "target_degree",
-    },
-    {
-      accessorKey: "combined_degree",
-      header: "combined_degree",
-    },
-    {
-        accessorKey: "rank",
-        header: "rank",
-    },
+    // {
+    //     accessorKey: "text_unit_ids",
+    //     header: "text_unit_ids",
+    //     Cell: ({ renderedCellValue }) =>
+    //       Array.isArray(renderedCellValue)
+    //         ? JSON.stringify(renderedCellValue, null, 2)
+    //         : renderedCellValue,
+    // },
+    // {
+    //     accessorKey: "id",
+    //     header: "id",
+    // },
+    // {
+    //     accessorKey: "human_readable_id",
+    //     header: "human_readable_id",
+    // },
+    // {
+    //     accessorKey: "source_degree",
+    //     header: "source_degree",
+    // },
+    // {
+    //     accessorKey: "target_degree",
+    //     header: "target_degree",
+    // },
+    // {
+    //   accessorKey: "combined_degree",
+    //   header: "combined_degree",
+    // },
+    // {
+    //     accessorKey: "rank",
+    //     header: "rank",
+    // },
 ];

@@ -18,9 +18,11 @@ import {
 } from "../models/custom-graph-data";
 import { textUnitColumns } from "../models/text-unit";
 import { communityColumns } from "../models/community";
+// Import the Finding type and findingColumns
 import {
   communityReportColumns,
   findingColumns,
+  Finding,
 } from "../models/community-report";
 import { documentColumns } from "../models/document";
 import { covariateColumns } from "../models/covariate";
@@ -94,6 +96,8 @@ const DetailDrawer: React.FC<DetailDrawerProps> = ({
     }
 
     if (types.includes("FINDING")) {
+      // Include findingColumns here so that filteredColumns includes finding properties,
+      // though we'll render findings in a separate table with its own columns.
       findingColumns.forEach((tc) => {
         if (tc.accessorKey) {
           validAccessorKeys.add(tc.accessorKey);
@@ -114,8 +118,26 @@ const DetailDrawer: React.FC<DetailDrawerProps> = ({
     );
   };
 
-  const linkedNodeTypes = [...new Set(linkedNodes.map((node) => node.type))];
+  // Determine which types appear in linkedNodes
+  const linkedNodeTypes = [
+    ...new Set(linkedNodes.map((node) => node.type)),
+  ];
+
+  // Filter columns based on all linked node types (including FINDING)
   const filteredColumns = getFilteredNodeColumns(linkedNodeTypes);
+
+  // Separate out findings from other linked nodes
+  const linkedFindings = linkedNodes.filter(
+    (node) => node.type === "FINDING"
+  ) as Finding[];
+  const otherLinkedNodes = linkedNodes.filter(
+    (node) => node.type !== "FINDING"
+  );
+
+  // Filter out the "id" column from findingColumns
+  const findingColumnsNoId: MRT_ColumnDef<Finding>[] = findingColumns.filter(
+    (col) => col.accessorKey !== "id"
+  );
 
   return (
     <Drawer
@@ -125,6 +147,7 @@ const DetailDrawer: React.FC<DetailDrawerProps> = ({
       sx={{ zIndex: 1500 }}
     >
       <Box sx={{ width: "100%", padding: 3 }}>
+        {/* Header: Node or Relationship */}
         <Box
           sx={{
             display: "flex",
@@ -135,31 +158,17 @@ const DetailDrawer: React.FC<DetailDrawerProps> = ({
         >
           {selectedNode ? (
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-              {/* Node Details: {selectedNode.id.toString()} */}
               Node Details: {selectedNode.name.toString()}
             </Typography>
           ) : (
             <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-              {" "}
               {selectedRelationship && (
                 <>
-                  {"(:"}
-                  {getNodeType(selectedRelationship.source)} {"{name: "}
-                  {"'"}
                   {getNodeName(selectedRelationship.source)}
-                  {"'"}
-                  {"}"}
-                  {")"}
-                  {"-[:"}
-                  {selectedRelationship.type}
-                  {"]->"}
-                  {"(:"}
-                  {getNodeType(selectedRelationship.target)} {"{name: "}
-                  {"'"}
+                  {" — "}
+                  <strong>{selectedRelationship.type}</strong>
+                  {" — "}
                   {getNodeName(selectedRelationship.target)}
-                  {"'"}
-                  {"}"}
-                  {")"}
                 </>
               )}
             </Typography>
@@ -171,21 +180,17 @@ const DetailDrawer: React.FC<DetailDrawerProps> = ({
             <CloseIcon />
           </IconButton>
         </Box>
+
+        {/* Selected Node Info Card */}
         {selectedNode && (
           <Card sx={{ marginBottom: 3 }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                 Node Information
               </Typography>
-              <Typography>ID: {selectedNode.uuid}</Typography>
               <Typography>Title: {selectedNode.name}</Typography>
-              {selectedNode.covariate_type && (
-                <Typography>
-                  Covariate Type: {selectedNode.covariate_type}
-                </Typography>
-              )}
               <Typography>
-                Type: <Chip label={selectedNode.type} size="small" />{" "}
+                Type: <Chip label={selectedNode.type} size="small" />
               </Typography>
               {selectedNode.title && (
                 <Typography>
@@ -200,36 +205,22 @@ const DetailDrawer: React.FC<DetailDrawerProps> = ({
                   Number of Tokens: {selectedNode.n_tokens}
                 </Typography>
               )}
-
               {selectedNode.description && (
-                <Typography>Description: {selectedNode.description}</Typography>
-              )}
-              {selectedNode.human_readable_id && (
                 <Typography>
-                  Human Readable ID: {selectedNode.human_readable_id}
+                  Description: {selectedNode.description}
                 </Typography>
-              )}
-
-              {/* {selectedNode.human_readable_id ||
-                (selectedNode.human_readable_id === 0 && (
-                  <Typography>
-                    Human Readable ID: {selectedNode.human_readable_id}
-                  </Typography>
-                ))} */}
-              {selectedNode.raw_content && (
-                <Typography>Raw Content: {selectedNode.raw_content}</Typography>
               )}
             </CardContent>
           </Card>
         )}
+
+        {/* Selected Relationship Info Card */}
         {selectedRelationship && (
           <Card sx={{ marginBottom: 3 }}>
             <CardContent>
               <Typography variant="h6" sx={{ fontWeight: "bold" }}>
                 Relationship Information:
               </Typography>
-              <Typography>ID: {selectedRelationship.id}</Typography>
-
               <Typography>
                 Source: {getNodeName(selectedRelationship.source)}
               </Typography>
@@ -242,42 +233,44 @@ const DetailDrawer: React.FC<DetailDrawerProps> = ({
                   Description: {selectedRelationship.description}
                 </Typography>
               )}
-              {selectedRelationship.human_readable_id && (
-                <Typography>
-                  Human Readable ID: {selectedRelationship.human_readable_id}
-                </Typography>
-              )}
               {selectedRelationship.weight && (
                 <Typography>Weight: {selectedRelationship.weight}</Typography>
-              )}
-              {selectedRelationship.source_degree && (
-                <Typography>
-                  Source Degree: {selectedRelationship.source_degree}
-                </Typography>
-              )}
-              {selectedRelationship.target_degree && (
-                <Typography>
-                  Target Degree: {selectedRelationship.target_degree}
-                </Typography>
-              )}
-              {selectedRelationship.rank && (
-                <Typography>Rank: {selectedRelationship.rank}</Typography>
               )}
             </CardContent>
           </Card>
         )}
-        <Box sx={{ marginBottom: 2 }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
-            Linked Nodes
-          </Typography>
-          <DataTable columns={filteredColumns} data={linkedNodes} />
-        </Box>
+        
+        {/* Linked Findings (without the "id" column) */}
+        {linkedFindings.length > 0 && (
+          <Box sx={{ marginBottom: 3 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+              Linked Findings
+            </Typography>
+            <DataTable<Finding>
+              data={linkedFindings}
+              columns={findingColumnsNoId}
+            />
+          </Box>
+        )}
+
+        {/* Linked Nodes (excluding Findings) */}
+        {otherLinkedNodes.length > 0 && (
+          <Box sx={{ marginBottom: 3 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
+              Linked Nodes
+            </Typography>
+            <DataTable columns={filteredColumns} data={otherLinkedNodes} />
+          </Box>
+        )}
+
+        
+
+        {/* Linked Relationships (only if a node is selected) */}
         {selectedNode && (
           <Box>
             <Typography variant="subtitle1" sx={{ fontWeight: "bold" }}>
               Linked Relationships
             </Typography>
-
             <DataTable
               columns={customLinkColumns}
               data={linkedRelationships.map((link) => ({

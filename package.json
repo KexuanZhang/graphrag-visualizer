@@ -1,7 +1,7 @@
 {
   "name": "graphrag-visualizer",
   "version": "0.1.0",
-  "homepage": "https://noworneverev.github.io/graphrag-visualizer/",
+  "homepage": "https://github.com/KexuanZhang/graphrag-visualizer",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.13.0",
@@ -27,7 +27,7 @@
     "react-force-graph-3d": "^1.24.3",
     "react-ga4": "^2.1.0",
     "react-router-dom": "^6.27.0",
-    "react-scripts": "5.0.1",
+    "react-scripts": "^5.0.1",
     "react-table": "^7.8.0",
     "three": "^0.167.1",
     "three-spritetext": "^1.8.2",
@@ -37,8 +37,8 @@
   "scripts": {
     "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
-    "start": "react-app-rewired start",
-    "build": "react-app-rewired build",
+    "start": "react-scripts start",
+    "build": "react-scripts build",
     "test": "react-app-rewired test",
     "eject": "react-scripts eject"
   },
@@ -63,6 +63,6 @@
   "devDependencies": {
     "@types/react-table": "^7.7.20",
     "@types/three": "^0.167.1",
-    "gh-pages": "^6.1.1"
+    "gh-pages": "^6.3.0"
   }
 }
