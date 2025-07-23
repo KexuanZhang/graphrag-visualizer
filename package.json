@@ -1,5 +1,6 @@
 {
   "name": "graphrag-visualizer",
+  "homepage": "https://KexuanZhang.github.io/graphrag-visualizer",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
